@@ -3,7 +3,7 @@ from card import Card
 from enums import Suit, Rank, Difficulty
 from difficulty import get_draw_amount
 
-class Deck:
+class Stock:
     def __init__(self):
         self.cards = []
         self.bank = []

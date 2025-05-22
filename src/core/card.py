@@ -2,9 +2,10 @@ from enums import Suit, Rank, Color
 from randomizer import get_random_suit, get_random_rank
 
 class Card:
-    def __init__(self, suit: Suit, rank: Rank):
+    def __init__(self, suit: Suit, rank: Rank, hidden: bool = False):
         self.suit = suit
         self.rank = rank
+        self.hidden = hidden
 
     def is_rank_higher(self, other_card: 'Card') -> bool:
         return self.rank.value > other_card.rank.value
@@ -19,13 +20,16 @@ class Card:
         return Color.RED if self.suit in [Suit.HEARTS, Suit.DIAMONDS] else Color.BLACK
 
     def __str__(self):
+        if self.hidden:
+            return "??? of ????? (HIDDEN)"
         return f"{self.rank.name} of {self.suit.name} ({self.get_color().name})"
-    
+
     def clone(self) -> 'Card':
         return Card(self.suit, self.rank)
     
-def create_card(suit=None, rank=None) -> Card:
+def create_card(suit=None, rank=None, hidden=False) -> Card:
     return Card(
         suit or get_random_suit(),
         rank or get_random_rank(),
+        hidden=hidden
     )
