@@ -24,3 +24,12 @@ class Rank(Enum):
 class Color(Enum):
     RED = auto()
     BLACK = auto()
+
+    from enum import Enum, auto
+
+class Difficulty(Enum):
+    EASY = auto()
+    HARD = auto()
+
+    def __str__(self):
+        return self.name.capitalize()

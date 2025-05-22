@@ -1,7 +1,7 @@
 import random
 from card import Card
-from enums import Suit, Rank
-from difficulty import Difficulty, get_draw_amount
+from enums import Suit, Rank, Difficulty
+from difficulty import get_draw_amount
 
 class Deck:
     def __init__(self):
