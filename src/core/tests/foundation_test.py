@@ -1,11 +1,11 @@
-from parent_util import add_parent_dir_to_path
+from .parent_util import add_parent_dir_to_path
 
 add_parent_dir_to_path()
 
-from foundations import Foundation, Foundations
-from pile_part import create_pile
-from enums import Suit, Rank, Color
-from card import create_card
+from core.foundations import Foundation, Foundations
+from core.pile_part import create_pile
+from core.enums import Suit, Rank, Color
+from core.card import create_card
 
 def test_foundation_can_place_card():
     foundation = Foundation(Suit.HEARTS)

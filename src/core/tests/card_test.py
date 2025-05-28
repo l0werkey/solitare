@@ -1,9 +1,9 @@
-from parent_util import add_parent_dir_to_path
+from .parent_util import add_parent_dir_to_path
 
 add_parent_dir_to_path()
 
-from card import create_card
-from enums import Suit, Rank
+from core.card import create_card
+from core.enums import Suit, Rank
 
 def test_rank_comparison():
     card1 = create_card(rank=Rank.EIGHT)
