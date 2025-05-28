@@ -5,7 +5,7 @@ Zawiera punkt wejścia do programu i inicjalizację głównych komponentów gry.
 
 from game_wrapper import GameWrapper
 from play_state import PlayState
-from menu_state import MenuState
+# from menu_state import MenuState
 from core.enums import Difficulty
 
 def main():
