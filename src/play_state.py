@@ -550,9 +550,6 @@ class PlayState(GameState):
             except ValueError as e:
                 self.toasts.append(str(e))
 
-        if input == 'w':
-            self.get_owner().set_state(WinState('win'))
-
         if self.cursor_type == CursorType.TABLEAU:
             self.handle_cursor_for_tableau(input)
 
@@ -563,6 +560,5 @@ class PlayState(GameState):
             self.handle_cursor_for_foundation(input)
 
         if self.get_owner().get_game().has_won():
-            sys.exit(0)
-            print("You won!")
+            self.get_owner().set_state(WinState('win'))
 
