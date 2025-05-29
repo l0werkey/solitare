@@ -9,6 +9,10 @@ from core.card import create_card
 from core.game import SolitareGame
 from core.transfer import TableauTransfer
 
+def mock_transfer_listener(time_enum):
+    """Mock transfer listener for testing"""
+    pass
+
 def test_card_revelation_on_remove_top_card():
     tableau = Tableau()
     
@@ -60,7 +64,7 @@ def test_no_revelation_when_card_already_visible():
     assert king_hearts.hidden == False, "King should remain visible"
 
 def test_card_revelation_with_transfer_system():
-    game = SolitareGame(Difficulty.EASY)
+    game = SolitareGame(Difficulty.EASY, transfer_listener=mock_transfer_listener)
     
     game.tableau.piles = [None] * 7
     
@@ -82,7 +86,7 @@ def test_card_revelation_with_transfer_system():
     assert top_card.rank == Rank.ACE, "Ace should now be the top card in source pile"
 
 def test_card_revelation_with_single_card_transfer():
-    game = SolitareGame(Difficulty.EASY)
+    game = SolitareGame(Difficulty.EASY, transfer_listener=mock_transfer_listener)
     
     game.tableau.piles = [None] * 7
     
@@ -110,7 +114,7 @@ def test_card_revelation_with_single_card_transfer():
 
 def test_no_revelation_when_transferring_from_empty_pile():
     """Test that transfers from empty piles are handled gracefully."""
-    game = SolitareGame(Difficulty.EASY)
+    game = SolitareGame(Difficulty.EASY, transfer_listener=mock_transfer_listener)
     
     game.tableau.piles[0] = None
     game.tableau.piles[1] = None

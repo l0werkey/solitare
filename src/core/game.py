@@ -143,8 +143,7 @@ class SolitareGame:
         Zwraca aktualny poziom trudności gry.
         
         Returns:
-            Difficulty: Poziom trudności gry
-        """
+            Difficulty: Poziom trudności gry        """
         return self.difficulty
     
     def copy(self) -> 'SolitareGame':
@@ -157,7 +156,7 @@ class SolitareGame:
         new_game = SolitareGame(self.difficulty, self.transfer_listener)
         new_game.tableau = self.tableau.copy()
         new_game.stock = self.stock.copy()
-        new_game.foundations = self.foundations.copy_all()
+        new_game.foundations = self.foundations.copy()
         return new_game
     
     def has_won(self) -> bool:

@@ -113,9 +113,5 @@ class Foundations:
             return foundation.can_place_card(card)
         return False
 
-    def get_all(self):
-        """Get all foundation objects"""
-        return list(self.foundations.values())
-
     def get_type(self):
         return TransferType.FOUNDATION

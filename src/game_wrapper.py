@@ -7,6 +7,13 @@ from core.game import SolitareGame
 from blessed import Terminal
 from ui.screen import Screen
 from core.enums import Difficulty, Time
+import dill
+import os
+from transition_manager import TransitionManager
+import sys
+import random
+import time
+from menu_state import MenuState
 
 class GameWrapper:
     """
@@ -29,8 +36,9 @@ class GameWrapper:
         self._term = Terminal()
         self._screen = Screen(self._term.width, self._term.height)
         self.running = True
+        self.transition_manager = TransitionManager(self)
 
-    def set_state(self, state) -> None:
+    def set_state(self, state, force=False) -> None:
         """
         Ustawia nowy stan gry.
         
@@ -42,17 +50,30 @@ class GameWrapper:
         """
         if self._current_state is state:
             return
-        if self._current_state is not None:
-            self._current_state.set_as_owner(None)
-        self._current_state = state
-        self._current_state.set_as_owner(self)
+            
+        if not force:
+            self.transition_manager.begin(self._screen, state)
+        else:
+            if self._current_state is not None:
+                self._current_state.set_as_owner(None)
+            self._current_state = state
+            self._current_state.set_as_owner(self)
 
-        self._current_state.set_game(self._game)
+            self._current_state.set_game(self._game)
 
-        self._current_state.init()
+            self._current_state.init()
 
-        self._screen.clear()
-        self._current_state.draw(self._term, self._screen)
+            self._screen.clear()
+            self._current_state.draw(self._term, self._screen)
+
+    def menu(self):
+        """
+        Ustawia stan menu gry.
+        
+        Tworzy nową instancję MenuState i ustawia ją jako aktualny stan gry.
+        """
+        menu_state = MenuState("menu_state")
+        self.set_state(menu_state)
 
 
     def get_game(self) -> SolitareGame:
@@ -121,7 +142,7 @@ class GameWrapper:
             if time == Time.PRE_MOVE:
                 wrapper.save_state()
             elif time == Time.POST_MOVE:
-                pass
+                self.save_game()
 
         return on_transfer
     
@@ -154,12 +175,59 @@ class GameWrapper:
             while self.running:
                 if self._current_state is not None:
                     input = self._term.inkey(timeout=0.02)
-                    if input:
+                    if input and not self.transition_manager.began():
                         self._current_state.on_input(self._term, input)
+
+                    random.seed(time.time())
+                    for x in range(16):
+                        if self.transition_manager.began():
+                            if self.transition_manager.complete:
+                                self.transition_manager.reduct()
+                            else:
+                                self.transition_manager.expand()
+
 
                     self._screen.clear()
                     self._current_state.draw(self._term, self._screen)
+                    self.transition_manager.render(self._screen, self._term)
                     self._screen.render(self._term, 0, 0)
 
         print(self._term.clear)
         print("Thanks for playing!")
+
+    def was_game_saved(self) -> bool:
+        """
+        Sprawdza, czy gra została zapisana.
+        Returns:
+            bool: True jeśli gra została zapisana, False w przeciwnym razie
+        """
+        return os.path.exists("save.bin")
+    
+    def save_game(self) -> None:
+        """
+        Zapisuje aktualny stan gry do pliku.
+        
+        Serializuje obiekt gry i zapisuje go do pliku 'save.bin'.
+        """
+        self._game.transfer_listener = None
+        with open("save.bin", "wb") as f:
+            dill.dump(self._game, f)
+        self._game.transfer_listener = self.create_on_transfer()
+
+    def load_game(self) -> None:
+        """
+        Ładuje stan gry z pliku.
+        
+        Deserializuje obiekt gry z pliku 'save.bin' i ustawia go jako aktualny stan gry.
+        
+        Raises:
+            FileNotFoundError: Jeśli plik 'save.bin' nie istnieje
+        """
+
+        if not os.path.exists("save.bin"):
+            raise FileNotFoundError("Save file not found.")
+        with open("save.bin", "rb") as f:
+            self._game = dill.load(f)
+            print(dill.load(f))
+        self._game.transfer_listener = self.create_on_transfer()
+

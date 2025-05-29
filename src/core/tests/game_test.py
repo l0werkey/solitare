@@ -6,15 +6,19 @@ from core.game import SolitareGame
 from core.enums import Difficulty
 from core.transfer import TableauTransfer, StockTransfer
 
+def mock_transfer_listener(time_enum):
+    """Mock transfer listener for testing"""
+    pass
+
 def test_game_initialization():
-    game = SolitareGame(difficulty=Difficulty.EASY)
+    game = SolitareGame(difficulty=Difficulty.EASY, transfer_listener=mock_transfer_listener)
     assert game.tableau is not None
     assert game.stock is not None
     assert game.foundations is not None
     assert game.get_difficulty() == Difficulty.EASY
 
 def test_game_tt_transfer():
-    game = SolitareGame(difficulty=Difficulty.EASY)
+    game = SolitareGame(difficulty=Difficulty.EASY, transfer_listener=mock_transfer_listener)
     
     # Set up a controlled scenario - clear pile 0 and 1, put King on 0
     game.tableau.piles[0] = None
@@ -46,7 +50,7 @@ def test_game_tt_transfer():
     assert game.tableau.get_pile(1) is not None
 
 def test_game_st_transfer():
-    game = SolitareGame(difficulty=Difficulty.EASY)
+    game = SolitareGame(difficulty=Difficulty.EASY, transfer_listener=mock_transfer_listener)
     
     # For stock transfer, we need to check if stock has cards and can draw
     initial_remaining_cards = game.stock.get_remaining_cards()
@@ -67,7 +71,7 @@ def test_game_st_transfer():
     assert success in [True, False]  # Should be a boolean
     
 def test_game_invalid_transfer():
-    game = SolitareGame(difficulty=Difficulty.EASY)
+    game = SolitareGame(difficulty=Difficulty.EASY, transfer_listener=mock_transfer_listener)
     
     source = TableauTransfer(
         tableau=game.tableau,

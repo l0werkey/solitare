@@ -23,10 +23,10 @@ class Screen:
         return " "
     
     def insert_line(self, x: int, y: int, line: str, prefix="", suffix=""):
-        if 0 <= y < self.height:
+        if 0 <= y and y < len(self.chars):
             for i, char in enumerate(line):
                 cx = x + i
-                if 0 <= cx < self.width:
+                if 0 <= cx < self.width and cx < len(self.chars[y]):
                     self.chars[y][cx] = f"{prefix}{char}{suffix}"
 
     def bg(self, char: str):

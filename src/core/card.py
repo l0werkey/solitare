@@ -90,7 +90,9 @@ class Card:
         Returns:
             Card: Nowa karta z takimi samymi właściwościami
         """
-        return Card(self.suit, self.rank)
+        card = Card(self.suit, self.rank)
+        card.hidden = self.hidden
+        return card
     
     def copy(self) -> 'Card':
         """

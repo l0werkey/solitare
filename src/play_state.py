@@ -13,6 +13,7 @@ from core.transfer import TableauTransfer, StockTransfer, FoundationTransfer
 import sys
 from enum import Enum
 from core.enums import Suit
+from win_state import WinState
 
 BOARD_DETAILS = 50  # Liczba elementów dekoracyjnych na planszy
 
@@ -182,8 +183,8 @@ class PlayState(GameState):
         for i, toast in enumerate(self.toasts):
             screen.insert_line(0, screen.height - 1 - i, toast, prefix=term.on_black + term.white, suffix=term.normal)
 
-        if self.global_timer % 20 == 0:
-            if len(self.toasts) > 0:
+        if len(self.toasts) > 0:
+            if self.global_timer % max(5, int(20/len(self.toasts))) == 0:
                 self.toasts.pop(0)
 
         self.global_timer += 1
@@ -523,9 +524,10 @@ class PlayState(GameState):
                             self.cursor = (x, 0)
                             self.frame = 0
                             self.clamp_cursor()
+                            placed = True
                             break
-                        else:
-                            self.toasts.append("No valid moves available.")
+                    if not placed:
+                        self.toasts.append("No valid moves available.")
             
 
     def on_input(self, term, input):
@@ -540,13 +542,16 @@ class PlayState(GameState):
             input: Wciśnięty klawisz od użytkownika
         """
         if input == 'q':
-            self.get_owner().running = False
+            self.get_owner().menu()
 
         if input == 'z':
             try:
                 self.get_owner().undo()
             except ValueError as e:
                 self.toasts.append(str(e))
+
+        if input == 'w':
+            self.get_owner().set_state(WinState('win'))
 
         if self.cursor_type == CursorType.TABLEAU:
             self.handle_cursor_for_tableau(input)

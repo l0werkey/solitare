@@ -14,7 +14,8 @@ class Offer:
 
     def complete(self):
         self.complete_offer()
-        self.signature(self)
+        if self.signature:
+            self.signature(self)
     
     def sign(self, signature: Callable[['Offer'], None]):
         self.signature = signature
@@ -117,13 +118,12 @@ class StockTransfer(Transfer):
         return TransferType.STOCK
 
     def create_offer(self, offering_to: TransferType) -> Optional[Offer]:
-        if not self.stock.can_draw():
-            return None
-        
         if not self.stock.can_draw_from_waste(self.difficulty):
             return None
 
-        card = self.stock.get_waste()[-1]
+        card = self.stock.get_top_waste_card()
+        if not card:
+            return None
 
         return Offer(
             item=card,
@@ -131,7 +131,7 @@ class StockTransfer(Transfer):
         )
     
     def complete_offer(self):
-        self.stock.draw_first_card_from_waste(self.difficulty)
+        self.stock.draw_top_card_from_waste()
     
     def verify_offer(self, offer: Offer) -> bool: # Can't move to stock - thus do not verify
         return False

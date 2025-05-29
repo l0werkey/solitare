@@ -5,7 +5,6 @@ Definiuje interfejs dla różnych stanów gry i zarządza powiązaniami z GameWr
 
 from blessed.keyboard import Keystroke
 from blessed import Terminal
-from game_wrapper import GameWrapper
 from ui.screen import Screen
 
 class GameState:
@@ -53,7 +52,7 @@ class GameState:
             raise ValueError("Game is not set.")
         return self._game
 
-    def get_owner(self) -> GameWrapper:
+    def get_owner(self) -> 'GameWrapper':
         """
         Zwraca właściciela tego stanu (GameWrapper).
         
@@ -67,7 +66,7 @@ class GameState:
             raise ValueError("State manager is not initialized.")
         return self._state_manager
 
-    def set_as_owner(self, state_manager: GameWrapper) -> None:
+    def set_as_owner(self, state_manager: 'GameWrapper') -> None:
         """
         Ustawia właściciela tego stanu.
         
@@ -77,8 +76,6 @@ class GameState:
         Raises:
             ValueError: Jeśli stan już ma właściciela
         """
-        if self._state_manager is not None:
-            raise ValueError("This state already has an owner.")
         self._state_manager = state_manager
 
     def on_input(self, term: Terminal, input: Keystroke) -> None:
