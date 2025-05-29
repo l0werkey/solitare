@@ -1,6 +1,5 @@
 # Pasjans
--------
-Jak uruchmić?
+Jak uruchomić?
 1. Zainstaluj Pythona 3.x
 2. Zainstaluj wymagane biblioteki:
    ```
